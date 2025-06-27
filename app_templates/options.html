@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Changing Fields</title>
+    </head>
+<body>
+<h1>Change Settings</h1>
+<form action="/action_page.php">
+  
+  <label for="tempReference">Reference:</label>
+  <select name="tempReference" id="tempReference">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+  </select>
+  <br><br>
+  
+ 
+  <label for="maxTemp">Max Temperature:</label>
+  <input type="text" id="maxTemp" name="MaxTemp">
+  <br><br>
+  
+  <label for="maxTempTimestamp">Max Temperature Timestamp:</label>
+  <select name="maxTempTS" id="maxTempTS">
+    <option value="179023995">179023995</option>
+    <option value="179023996">179023996</option>
+    <option value="179023997">179023997</option>
+    <option value="179023998">179023998</option>
+    <option value="179023999">179023999</option>
+    <option value="179024000">179024000</option>
+  </select>
+  <br><br>
+<input type="submit" value="Submit">
+</form>
+<br><br>
+<button id="backBtn">Back</button>
+<script src="data:text/javascript,document.getElementById('backBtn').onclick = function() { window.location.href = 'index.html'; };" defer></script>
+<br><br>
+
+<p>Click the "Submit" button to change settings!</p>
+<body>
+</html>

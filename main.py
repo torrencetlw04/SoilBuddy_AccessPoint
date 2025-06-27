@@ -6,7 +6,7 @@ import os
 import utime
 import _thread
 
-AP_NAME = "pi pico"
+AP_NAME = "Pi Pico"
 AP_DOMAIN = "pipico.net"
 AP_TEMPLATE_PATH = "ap_templates"
 APP_TEMPLATE_PATH = "app_templates"
@@ -63,6 +63,9 @@ def application_mode():
         onboard_led.toggle()
         return "OK"
     
+    def app_change_options(request):
+        return render_template(f"{APP_TEMPLATE_PATH}/options.html")
+
     def app_get_temperature(request):
         # Not particularly reliable but uses built in hardware.
         # Demos how to incorporate senasor data into this application.
@@ -90,6 +93,7 @@ def application_mode():
     server.add_route("/toggle", handler = app_toggle_led, methods = ["GET"])
     server.add_route("/temperature", handler = app_get_temperature, methods = ["GET"])
     server.add_route("/reset", handler = app_reset, methods = ["GET"])
+    server.add_route("/options", handler = app_change_options, methods= ["GET"])
     # Add other routes for your application...
     server.set_callback(app_catch_all)
 
