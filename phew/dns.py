@@ -1,4 +1,4 @@
-import uasyncio, usocket
+import uasyncio, usocket # type: ignore
 from . import logging
 
 async def _handler(socket, ip_address):

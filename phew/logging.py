@@ -1,4 +1,4 @@
-import machine, os, gc
+import machine, os, gc # type: ignore
 
 log_file = "log.txt"
 

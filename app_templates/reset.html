@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Raspberry Pi Pico W</title>
-    </head>
-    <body>
-        <h1>Resetting...</h1>
-        <p>Device is resetting so that the wifi configuration can be changed.</p>
-        <p>Connect to the wifi named "{{access_point_ssid}}" to configure new credentials.</p>
-    </body>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Complete</title>
+</head>
+<body>
+    <h1 class="success">WiFi Reset Complete</h1>
+    <div class="info">
+        <p>Device is now in Access Point mode:</p>
+        <ul>
+            <li>SSID: <strong>{{ access_point_ssid }}</strong></li>
+            <li>IP: <strong>{{ ip }}</strong></li>
+        </ul>
+    </div>
+    <p>Connect to this network to reconfigure WiFi.</p>
+</body>
 </html>
