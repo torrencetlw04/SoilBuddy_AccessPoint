@@ -10,6 +10,8 @@ Sources used:
 
 [micropython uf2 file](https://micropython.org/download/RPI_PICO/)
 
+[PyPI](https://pypi.org/)
+
 The purpose for this program is to be used in tandem with the Irrigation System to streamline the process of modifying the systems in work. Please recognize that this is still a work in progress to include a multitude of different features, specifically connection to and from the different microcontrollers involved in the process.
 
 Installation Process:
@@ -22,6 +24,7 @@ Installation Process:
 
 NOTE: 
 * This was made in mind of it only being used on the Raspberry Pi Pico W made in 2022. I believe any device that can run micropython will be able to use this program if changes are made on an indiviual level.
+* The sources I stated are what I used for this program. If you would like further details into how certain libraries and functions work, those links are incredibly useful in doing so. 
 * Pico is prone to freezing if too many attempts at connecting to wifi. If this happens put the pico in BOOSTEL mode and then use the [nuke_flash file](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#resetting-flash-memory) to delete files. Afterwards, you can put the Pico in BOOSTEL mode again to drop in the micropython uf2 file to make it work properly again. 
 
 Steps to using SoilBuddy Access Point:
