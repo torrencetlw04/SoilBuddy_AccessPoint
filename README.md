@@ -4,7 +4,7 @@ Access Point Wi-Fi Manager for Irrigation System.
 
 Sources used:
 
-phewap from Simon Pickett: https://github.com/simonprickett/phewap/blob/369a5074eb0ebc2e50e187fba8107d65d1526ea3/main.py#L4
+phewap from Simon Pickett: https://github.com/simonprickett/phewap
 
 sd mount & testing from Random Nerd Tutorials by Sara Santos: https://randomnerdtutorials.com/raspberry-pi-pico-microsd-card-micropython/
 
