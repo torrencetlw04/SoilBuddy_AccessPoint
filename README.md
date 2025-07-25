@@ -21,7 +21,7 @@ Features in Access Point:
 * Create/Edit Save Files for Irrigation System
 * Rename Files
 * Delete Files from SoilBuddy
-* Reset & Disconnect from WiFi to use in Access Point Mode
+* Reset & Disconnect from WiFi to use in Access Point Mode (192.168.4.1)
 * Upload Files to SoilBuddy (Work In Progress)
 * Apply changes from the files (Work In Progress) 
 
