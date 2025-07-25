@@ -15,6 +15,7 @@ WIFI_FILE = "wifi.json"
 SETTINGS_FILE = "settings.json"
 SD_MOUNT_PATH = '/sd'
 global_ip_address = None
+MAX_UPLOAD_SIZE = 1024 * 1024  # 1MB limit
 SD_SAVES = 1
 SPI_BUS = 0
 SCK_PIN = 2
@@ -23,7 +24,7 @@ MISO_PIN = 4
 CS_PIN = 5
 onboard_led = machine.Pin("LED", machine.Pin.OUT)
 
-# soft resets pico, working getting switch to work
+# resets pico, working getting switch to work
 def machine_reset():
     utime.sleep(5) # waits a second before going forward 
     print("Resetting...")
@@ -60,6 +61,37 @@ def app_configure(request):
         </html>
         """)
     
+    # Start connection if not already connected
+    if not wlan.active() or not wlan.isconnected():
+        def _connect_to_wifi():
+            try:
+                ip = connect_to_wifi(request.form["ssid"], request.form["password"])
+                if ip:
+                    global global_ip_address
+                    global_ip_address = ip
+            except Exception as e:
+                logging.error(f"Connection failed: {str(e)}")
+        
+        _thread.start_new_thread(_connect_to_wifi, ())
+    
+    # Show connection status page with auto-refresh
+    return server.Response(f"""
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Wifi Configured</title>
+            <meta http-equiv="refresh" content="3">
+        </head>
+        <body>
+            <h1>Wifi Configured</h1>
+            <p>The Raspberry Pi Pico is connecting to "{ssid}"...</p>
+            <p>Status: {'Connected' if wlan.isconnected() else 'Connecting...'}</p>
+            <p>IP Address: {global_ip_address if global_ip_address else 'Not assigned yet'}</p>
+            {'<button onclick="window.location.href=\'/\'">Continue</button>' if wlan.isconnected() else ''}
+        </body>
+    </html>
+    """)
     # Start connection if not already connected
     if not wlan.active() or not wlan.isconnected():
         def _connect_to_wifi():
@@ -142,7 +174,7 @@ def _perform_network_reset():
 def app_change_options(request):
     return render_template(f"{APP_TEMPLATE_PATH}/options.html")
 
-# shows changes were saved to file
+# shows changes were saved to a file
 def app_save_changes(request):
     # Save changes to settings file
     with open(SETTINGS_FILE, "w") as f:
@@ -192,6 +224,7 @@ def view_saves(request):
         <h1>Files on SD Card</h1>
         {file_links}
         <br>
+        <button onclick="window.location.href='/upload'">Upload File</button>
         <button onclick="window.location.href='/'">Go Home</button>
     </body>
     </html>
@@ -257,6 +290,10 @@ def transfer_file_to_sd():
     except OSError as e:
         return f"Failed to write to SD card: {e}\n\nCurrent contents:\n{list_sd_files()}"
 
+
+    except Exception as e:
+        return f"An error occurred: {str(e)}", 500
+    
 # rename saved settings files 
 def rename_file(request):
     # grabs names from post request 
@@ -397,21 +434,13 @@ def delete_file(request):
         </html>
         """, status=500)
 
-def delete_success(request):
-    # This is handled by the template directly
-    pass
-
-@server.route("/rename-success")
-def rename_success(request):
-    # This is handled by the template directly
-    pass
-
+# downloads file from /view
 @server.route("/download/<filename>")
 def download_file(request, filename):
     try:
         with open(f"{SD_MOUNT_PATH}/{filename}", "rb") as f:
             content = f.read() # gets content from file
-        return server.Response( # creates file from content to download
+        return server.Response( # downloads file to device
             content,
             headers={"Content-Disposition": f"attachment; filename={filename}"} 
         )
@@ -444,9 +473,22 @@ try:
     print("Initial SD card contents:", list_sd_files())
     SD_MOUNTED = True
 
+
+
 except Exception as e:
     print('SD card initialization failed:', e)
     SD_MOUNTED = False
+
+# try:
+#     with open('SETTINGS_FILE', 'r') as f:
+#         content = f.read().strip()
+#         if content:  # Only parse if there's actual content
+#             wifi_credentials = json.loads(content)
+#             ip_address = connect_to_wifi(wifi_credentials["ssid"], wifi_credentials["password"])
+# except (FileNotFoundError, json.JSONDecodeError):
+#     pass  # Explicitly do nothing for these expected cases
+# except Exception:
+#     pass  # Catch-all for any other errors, doing nothing
 
 
 # Routes to different pages
@@ -460,7 +502,6 @@ server.add_route("/options", handler = app_change_options, methods= ["POST", "GE
 server.add_route("/savechanges", handler = app_save_changes, methods= ["POST", "GET"])
 server.add_route("/rename-file", handler=rename_file, methods=["GET", "POST"])
 server.add_route("/delete-file", handler=delete_file, methods=["GET", "POST"])
-server.add_route("/delete-success", handler=delete_success, methods=["GET"])
 server.set_callback(app_catch_all)
 
 # Set to Accesspoint mode

@@ -45,6 +45,7 @@ class Request:
     self.uri = uri
     self.protocol = protocol
     self.form = {}
+    self.file = {}
     self.data = {}
     self.query = {}
     query_string_start = uri.find("?") if uri.find("?") != -1 else len(uri)
