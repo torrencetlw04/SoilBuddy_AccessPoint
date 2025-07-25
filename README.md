@@ -1,6 +1,6 @@
 USDA Project from Torrence Washington 
 
-Access Point Manager for Irrigation System.
+SoilBuddy Access Point Manager for Irrigation System.
 
 Sources used:
 
