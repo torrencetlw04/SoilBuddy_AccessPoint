@@ -34,4 +34,4 @@ Installation Process:
 6. You can run main.py in terminal or plug the Pico into a power source and it'll automactically run the main.py file. 
 
 NOTE: 
-Pico is prone to freezing. If this happens put the pico in BOOSTEL mode and then use the [nuke_flash file](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#resetting-flash-memory) to delete files. Afterwards, you can put the Pico in BOOSTEL mode again to drop the micropython uf2 file to make it work again. 
+Pico is prone to freezing if too many attempts at connecting to wifi. If this happens put the pico in BOOSTEL mode and then use the [nuke_flash file](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#resetting-flash-memory) to delete files. Afterwards, you can put the Pico in BOOSTEL mode again to drop in the micropython uf2 file to make it work properly again. 
