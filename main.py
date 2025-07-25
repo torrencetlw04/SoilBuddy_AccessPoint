@@ -13,6 +13,7 @@ APP_TEMPLATE_PATH = "app_templates"
 AP_NAME = "USAP"
 WIFI_FILE = "wifi.json"
 SETTINGS_FILE = "settings.json"
+READING_FILE = "reading.json"
 SD_MOUNT_PATH = '/sd'
 global_ip_address = None
 MAX_UPLOAD_SIZE = 1024 * 1024  # 1MB limit
@@ -193,13 +194,14 @@ def app_save_changes(request):
 # view saves on sd card
 def view_saves(request):
     try:
-        files = os.listdir(SD_MOUNT_PATH)
+        files = [f for f in os.listdir(SD_MOUNT_PATH) if f != READING_FILE]  # Filter out reading.json
         file_links = ""
         for filename in files:
             file_links += f"""
             <div style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center;">
                 <a href="/download/{filename}">{filename}</a>
                 <div>
+                    <button onclick="window.location.href='/apply?file={filename}'" style="margin-right: 5px;">Apply</button>
                     <button onclick="window.location.href='/rename-file?file={filename}'" style="margin-right: 5px;">Rename</button>
                     <button onclick="if(confirm('Delete {filename}?')) window.location.href='/delete-file?file={filename}'" style="background-color: #ff4444; color: white;">Delete</button>
                 </div>
@@ -294,6 +296,48 @@ def transfer_file_to_sd():
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
     
+# apply saved settings to reading.json
+def apply_settings(request):
+    filename = request.query.get("file")
+    if not filename:
+        return "No file specified", 400
+    
+    try:
+        # Security check to prevent directory traversal
+        if filename.startswith("/") or filename.startswith(".."):
+            return "Invalid filename", 400
+            
+        source_path = f"{SD_MOUNT_PATH}/{filename}"
+        dest_path = f"{SD_MOUNT_PATH}/{READING_FILE}"  # Use global variable
+        
+        # Read the source file
+        with open(source_path, "r") as src_file:
+            content = src_file.read()
+        
+        # Write to reading.json
+        with open(dest_path, "w") as dest_file:
+            dest_file.write(content)
+            
+        return server.Response(f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Settings Applied</title>
+        </head>
+        <body>
+            <h1>Settings Applied Successfully</h1>
+            <p>Content from {filename} has been written to {READING_FILE}</p>
+            <br>
+            <button onclick="window.location.href='/view'">Back to Files</button>
+            <button onclick="window.location.href='/'">Go Home</button>
+        </body>
+        </html>
+        """)
+        
+    except Exception as e:
+        return f"Error applying settings: {str(e)}", 500
+
 # rename saved settings files 
 def rename_file(request):
     # grabs names from post request 
@@ -479,17 +523,6 @@ except Exception as e:
     print('SD card initialization failed:', e)
     SD_MOUNTED = False
 
-# try:
-#     with open('SETTINGS_FILE', 'r') as f:
-#         content = f.read().strip()
-#         if content:  # Only parse if there's actual content
-#             wifi_credentials = json.loads(content)
-#             ip_address = connect_to_wifi(wifi_credentials["ssid"], wifi_credentials["password"])
-# except (FileNotFoundError, json.JSONDecodeError):
-#     pass  # Explicitly do nothing for these expected cases
-# except Exception:
-#     pass  # Catch-all for any other errors, doing nothing
-
 
 # Routes to different pages
 server.add_route("/", handler = app_index, methods = ["POST", "GET"])
@@ -502,6 +535,7 @@ server.add_route("/options", handler = app_change_options, methods= ["POST", "GE
 server.add_route("/savechanges", handler = app_save_changes, methods= ["POST", "GET"])
 server.add_route("/rename-file", handler=rename_file, methods=["GET", "POST"])
 server.add_route("/delete-file", handler=delete_file, methods=["GET", "POST"])
+server.add_route("/apply", handler=apply_settings, methods=["GET"])
 server.set_callback(app_catch_all)
 
 # Set to Accesspoint mode
