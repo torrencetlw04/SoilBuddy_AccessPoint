@@ -20,15 +20,15 @@ Installation Process:
 3. Afterwards the Pico drive will disappear, which means it is now on the Pico.
 4. Download or Clone project into a compiler (perferably Visual Code Studio, Thonny should be able to work though).
 5. Install MicroPico if on Visual Studio, connect to the board and upload project to Pico.
-6. You can run main.py in terminal or plug the Pico into a power source and it'll automactically run the main.py file. 
+6. You can run main.py in terminal or plug the Pico into a power source and it'll automatically run the main.py file. 
 
 NOTE: 
 * This was made in mind of it only being used on the Raspberry Pi Pico W made in 2022. I believe any device that can run micropython will be able to use this program if changes are made on an indiviual level.
 * The sources I stated are what I used for this program. If you would like further details into how certain libraries and functions work, those links are incredibly useful in doing so. 
-* Pico is prone to freezing if too many attempts at connecting to wifi. If this happens put the pico in BOOSTEL mode and then use the [nuke_flash file](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#resetting-flash-memory) to delete files. Afterwards, you can put the Pico in BOOSTEL mode again to drop in the micropython uf2 file to make it work properly again. 
+* Pico is prone to freezing if too many attempts at connecting to wifi. If this happens put the pico in BOOSTEL mode and then use the [nuke_flash file](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#resetting-flash-memory) to delete files. Afterwards, you can put the Pico in BOOSTEL mode again to drop in the micropython uf2 file to upload the project and make it work properly again. 
 
 Steps to using SoilBuddy Access Point:
- 1. Connect Raspberry Pi Pico W to a power source, or if on Compiler run main.py.
+ 1. Connect Raspberry Pi Pico W to a power source, or if on a compiler run main.py.
  2. Go to wifi settings and connect to "USAP".
  3. Go to 192.168.4.1 in a browser of your choosing at you'll arrive at the SoilBuddy AP!
 
