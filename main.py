@@ -5,7 +5,7 @@
 
 from phew import server, logging, access_point, dns, connect_to_wifi, is_connected_to_wifi
 from phew.template import render_template
-import json, sdcard, os, _thread, machine, utime, gc, network, socket # type: ignore
+import json, sdcard, os, _thread, machine, utime, gc, sys, network, socket # type: ignore
 from machine import SPI, Pin # type: ignore
 gc.threshold(50000) # setup garbage collection
 
@@ -46,7 +46,7 @@ def app_configure(request):
     
     # Check if already connected
     if wlan.isconnected():
-        ip = wlan.ifconfig()[0]
+        ip = wlan.ifconfig()[0]  # Get current IP
         return server.Response(f"""
         <!DOCTYPE html>
         <html>
@@ -66,44 +66,14 @@ def app_configure(request):
     if not wlan.active() or not wlan.isconnected():
         def _connect_to_wifi():
             try:
-                ip = connect_to_wifi(request.form["ssid"], request.form["password"])
-                if ip:
-                    global global_ip_address
-                    global_ip_address = ip
-            except Exception as e:
-                logging.error(f"Connection failed: {str(e)}")
-        
-        _thread.start_new_thread(_connect_to_wifi, ())
-    
-    # Show connection status page with auto-refresh
-    return server.Response(f"""
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Wifi Configured</title>
-            <meta http-equiv="refresh" content="3">
-        </head>
-        <body>
-            <h1>Wifi Configured</h1>
-            <p>The Raspberry Pi Pico is connecting to "{ssid}"...</p>
-            <p>Status: {'Connected' if wlan.isconnected() else 'Connecting...'}</p>
-            <p>IP Address: {global_ip_address if global_ip_address else 'Not assigned yet'}</p>
-            {'<button onclick="window.location.href=\'/\'">Continue</button>' if wlan.isconnected() else ''}
-        </body>
-    </html>
-    """)
-    # Start connection if not already connected
-    if not wlan.active() or not wlan.isconnected():
-        def _connect_to_wifi():
-            try:
                 connect_to_wifi(request.form["ssid"], request.form["password"])
             except Exception as e:
                 logging.error(f"Connection failed: {str(e)}")
         
         _thread.start_new_thread(_connect_to_wifi, ())
     
-    # Show connection status page
+    # Show connection status page with auto-refresh
+    current_ip = wlan.ifconfig()[0] if wlan.isconnected() else "Not assigned yet"
     return server.Response(f"""
     <!DOCTYPE html>
     <html>
@@ -115,7 +85,7 @@ def app_configure(request):
         <body>
             <h1>Wifi Configured</h1>
             <p>The Raspberry Pi Pico is connecting to "{ssid}"...</p>
-            <p>Status: {'Connected' if wlan.isconnected() else 'Connecting...'}</p>
+            <p>Go to IP Address: {current_ip}</p>
             {'<button onclick="window.location.href=\'/\'">Continue</button>' if wlan.isconnected() else ''}
         </body>
     </html>
@@ -144,6 +114,7 @@ def _delayed_reset():
     """Threaded reset with proper timing"""
     utime.sleep(1.5)  # Critical: Allow page to fully load first
     _perform_network_reset()
+    sys.exit()
 
 # disconnect from wifi & reset
 def _perform_network_reset():
@@ -522,6 +493,7 @@ try:
 except Exception as e:
     print('SD card initialization failed:', e)
     SD_MOUNTED = False
+
 
 
 # Routes to different pages
