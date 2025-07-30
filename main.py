@@ -16,7 +16,6 @@ SETTINGS_FILE = "settings.json"
 READING_FILE = "reading.json"
 SD_MOUNT_PATH = '/sd'
 global_ip_address = None
-MAX_UPLOAD_SIZE = 1024 * 1024  # 1MB limit
 SD_SAVES = 1
 SPI_BUS = 0
 SCK_PIN = 2
@@ -25,7 +24,7 @@ MISO_PIN = 4
 CS_PIN = 5
 onboard_led = machine.Pin("LED", machine.Pin.OUT)
 
-# resets pico, working getting switch to work
+# resets pico, working getting switch to work (pontentially delete or ignore)
 def machine_reset():
     utime.sleep(5) # waits a second before going forward 
     print("Resetting...")
