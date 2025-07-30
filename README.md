@@ -17,8 +17,8 @@ The purpose for this program is to be used in tandem with the Irrigation System 
 Installation Process:
 1. Put Pico in BOOSTEL mode by holding the small white button on the pico and plugging it into the USB port of the computer.
 2. Drag and drop the micropython uf2 file to the Pico drive and wait for to finish loading.
-3. Afterwards the Pico drive will disappear, which means it is now on the Pico.
-4. Download or Clone project into a compiler (perferably Visual Code Studio, Thonny should be able to work though).
+3. Afterwards the Pico drive will disappear, which means the micropython library is now runnable on the  
+4. Download or Clone project into a compiler (perferably Visual Code Studio, Thonny and PyCharm should be able to work though).
 5. Install MicroPico if on Visual Studio, connect to the board and upload project to Pico.
 6. You can run main.py in terminal or plug the Pico into a power source and it'll automatically run the main.py file. 
 
